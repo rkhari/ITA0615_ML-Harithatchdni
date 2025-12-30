@@ -1,0 +1,70 @@
+# Pure Python House Price Prediction
+
+# Step 1: Create dataset as a list of dictionaries
+data = [
+    {'area':1200,'bedrooms':2,'bathrooms':1,'stories':1,'parking':1,'price':3500000},
+    {'area':1500,'bedrooms':3,'bathrooms':2,'stories':1,'parking':1,'price':4500000},
+    {'area':1800,'bedrooms':3,'bathrooms':2,'stories':2,'parking':2,'price':5500000},
+    {'area':2400,'bedrooms':4,'bathrooms':3,'stories':2,'parking':2,'price':7200000},
+    {'area':3000,'bedrooms':5,'bathrooms':4,'stories':3,'parking':3,'price':9000000},
+    {'area':1100,'bedrooms':2,'bathrooms':1,'stories':1,'parking':1,'price':3200000},
+    {'area':1600,'bedrooms':3,'bathrooms':2,'stories':2,'parking':2,'price':4800000},
+    {'area':2000,'bedrooms':4,'bathrooms':3,'stories':2,'parking':2,'price':6500000},
+    {'area':2500,'bedrooms':4,'bathrooms':3,'stories':2,'parking':2,'price':7800000},
+    {'area':2800,'bedrooms':5,'bathrooms':4,'stories':3,'parking':3,'price':8800000},
+]
+
+# Step 2: Print first 5 rows
+print("First 5 rows of dataset:")
+for row in data[:5]:
+    print(row)
+
+# Step 3: Basic statistics for 'price'
+prices = [row['price'] for row in data]
+mean_price = sum(prices)/len(prices)
+min_price = min(prices)
+max_price = max(prices)
+
+print("\nPrice Statistics:")
+print("Mean:", mean_price)
+print("Min:", min_price)
+print("Max:", max_price)
+
+# Step 4: Check for missing values
+print("\nChecking for missing values:")
+for key in data[0].keys():
+    missing = sum(1 for row in data if row[key] is None)
+    print(f"{key}: {missing} missing")
+
+# Step 5: Fill missing values with mode (if any)
+for key in data[0].keys():
+    # calculate mode
+    vals = [row[key] for row in data if row[key] is not None]
+    mode_val = max(set(vals), key=vals.count)
+    # replace None with mode
+    for row in data:
+        if row[key] is None:
+            row[key] = mode_val
+
+# Step 6: Simple linear regression to predict price based on area
+# Using formula: slope = covariance(x,y)/variance(x), intercept = mean_y - slope*mean_x
+
+areas = [row['area'] for row in data]
+
+# Compute mean of x and y
+mean_area = sum(areas)/len(areas)
+mean_price = sum(prices)/len(prices)
+
+# Compute slope
+cov = sum((areas[i]-mean_area)*(prices[i]-mean_price) for i in range(len(data)))
+var = sum((areas[i]-mean_area)**2 for i in range(len(data)))
+slope = cov / var
+intercept = mean_price - slope*mean_area
+
+print("\nLinear Regression Model:")
+print(f"Price = {intercept:.2f} + {slope:.2f} * Area")
+
+# Step 7: Predict price for a new house
+new_area = 2300
+predicted_price = intercept + slope*new_area
+print(f"\nPredicted price for house with area {new_area} sq.ft.: {predicted_price:.2f}")
