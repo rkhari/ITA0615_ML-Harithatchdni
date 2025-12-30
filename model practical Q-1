@@ -68,3 +68,4 @@ print(f"Price = {intercept:.2f} + {slope:.2f} * Area")
 new_area = 2300
 predicted_price = intercept + slope*new_area
 print(f"\nPredicted price for house with area {new_area} sq.ft.: {predicted_price:.2f}")
+
